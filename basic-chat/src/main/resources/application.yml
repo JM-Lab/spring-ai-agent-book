@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: spring-ai-agent-book
+  main:
+    web-application-type: none # 웹 서버를 띄우지 않는 콘솔형 실행(REST API 개발 시 변경)
+  ai:
+    ollama:
+      base-url: http://localhost:11434  # 로컬 올라마 서버 주소
+      chat:
+        think: false         # 추론(thinking) 비활성
+        model: qwen3.5:4b
