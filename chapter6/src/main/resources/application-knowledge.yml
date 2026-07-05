@@ -1,0 +1,26 @@
+server:
+  port: 8086
+spring:
+  config:
+    activate:
+      on-profile: knowledge
+  main:
+    web-application-type: servlet
+  ai:
+    model:
+      chat: ollama                    # RAG 답변 생성용 챗 모델
+      embedding: ollama               # RAG 문서 임베딩용 모델
+    ollama:
+      embedding:
+        model: bge-m3                 # RAG 문서 임베딩
+    rag:
+      documents-dir: src/main/resources/data
+    mcp:
+      client:
+        enabled: false
+      server:
+        enabled: true
+        name: chapter6-knowledge-mcp-server      # 지식(RAG) 서버: rag_answer_question agent-as-a-tool
+        protocol: STREAMABLE
+        streamable-http:
+          mcp-endpoint: /mcp

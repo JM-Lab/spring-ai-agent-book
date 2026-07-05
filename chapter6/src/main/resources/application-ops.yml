@@ -1,0 +1,18 @@
+server:
+  port: 8085
+spring:
+  config:
+    activate:
+      on-profile: ops
+  main:
+    web-application-type: servlet
+  ai:
+    mcp:
+      client:
+        enabled: false
+      server:
+        enabled: true
+        name: chapter6-operations-mcp-server     # 운영(주문, 재고) 서버: 코어 @McpTool
+        protocol: STREAMABLE
+        streamable-http:
+          mcp-endpoint: /mcp

@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: chapter6-agent-client
+  main:
+    web-application-type: none        # CLI 채널(서버 프로파일에서 서블릿으로 덮어씀)
+    banner-mode: off
+  ai:
+    cli:
+      step: ch6-final                 # 옵션 없이 실행하면 최종 통합 CLI
+      agent:                          # 에이전트 페르소나(시스템 프롬프트)를 코드 밖 설정으로 분리
+        core:
+          system-prompt: |
+            당신은 사용자의 요청을 끝까지 처리하는 AI 에이전트입니다.
+            - 작업에 필요한 툴이 있으면 직접 호출하고, 결과를 확인한 뒤 다음 행동을 결정합니다.
+            - 툴로 확인하지 않은 사실은 단정하지 않습니다.
+            - 모든 작업이 끝나면 수행한 내용을 한국어로 간결하게 요약합니다.
+        enhanced:
+          system-prompt: |
+            당신은 사용자의 요청을 끝까지 처리하는 AI 에이전트입니다.
+            - 사내 절차, 정책(재발주, 재고 산정 등)에 관한 일이면, 먼저 SkillsTool로 관련 스킬을 불러와 그 절차를 그대로 따릅니다. 절차서에 기준, 수치(예: 안전재고)가 있으면 사용자에게 되묻지 말고 그대로 적용합니다.
+            - 여러 단계가 필요한 작업은 작업 계획 툴로 할 일 목록을 만들고 단계별로 처리합니다.
+            - 무엇을 원하는지 자체가 불분명할 때만 명확화 질문을 던집니다. 따라야 할 절차가 스킬에 있으면 질문하지 않습니다.
+            - 명확화 질문의 답을 받으면 멈추지 말고, 그 답을 반영해 나머지 작업을 툴로 끝까지 진행합니다.
+            - 보고서 작성처럼 독립적인 하위 작업은 하위 에이전트에 위임할 수 있습니다.
+            - 작업에 필요한 툴이 있으면 직접 호출하고, 결과를 확인한 뒤 다음 행동을 결정합니다.
+            - 툴로 확인하지 않은 사실은 단정하지 않습니다.
+            - 모든 작업이 끝나면 수행한 내용을 한국어로 간결하게 요약합니다.
+    model:
+      chat: ollama                    # 챗 모델 제공자 선택
+      embedding: ollama               # 임베딩 모델 제공자 선택
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        think: low                    # 추론 레벨, low로 가벼운 추론 유지(아래 설명)
+        model: qwen3.5:4b             # 툴 호출을 지원하는 모델
+      embedding:
+        model: bge-m3                 # 동적 툴 발견(VectorToolIndex)이 툴을 의미 검색으로 색인할 때 사용
+    mcp:
+      client:
+        enabled: true
+        type: SYNC
+        toolcallback:
+          enabled: true               # 서버 툴을 메인 에이전트의 툴로 노출
+        streamable-http:
+          connections:
+            operations:               # Step 2부터: 운영 서버 (8085)
+              url: http://localhost:8085
+            # knowledge:
+            #   url: http://localhost:8086
+      server:
+        enabled: false                # 클라이언트는 MCP 서버 비활성
+
+# 관측: 표준 텔레메트리 생산: 트레이스 표본 100% + OTLP 내보내기 + 액추에이터 메트릭 노출
+# (전 프로파일 공통. 클라이언트는 web none이라 액추에이터 HTTP 미노출, 서버[servlet]에서 노출됨. 외부 수집기 연결은 이 프로젝트 범위 밖)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces    # OTLP/HTTP 트레이스 엔드포인트
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics       # OTLP/HTTP 메트릭 엔드포인트(표준 + 커스텀 지표)
+
+# 데모 가독성: 동적 툴 발견의 임베딩 색인 INFO 로그를 줄인다(메커니즘은 본문에서 설명)
+logging:
+  level:
+    org.springframework.ai.vectorstore.SimpleVectorStore: WARN
+    org.springframework.ai.tool.toolsearch: WARN
