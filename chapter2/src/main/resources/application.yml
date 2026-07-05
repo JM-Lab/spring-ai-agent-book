@@ -1,0 +1,15 @@
+logging:
+  level:
+    org.springframework.ai.chat.client.advisor: DEBUG # 어드바이저 동작 확인용(Step5 / final)
+spring:
+  ai:
+    # 실행할 Step 선택 - 2장: ch2-step1 ~ ch2-step5 / ch2-final
+    cli:
+      step: ch2-final
+    model:
+      chat: ollama
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        think: false         # 추론 비활성
+        model: qwen3.5:4b
