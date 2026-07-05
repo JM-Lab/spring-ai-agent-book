@@ -1,0 +1,11 @@
+spring:
+  ai:
+    cli:
+      step: ch4-final
+    model:
+      chat: ollama
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        think: false         # 추론 비활성
+        model: qwen3.5:4b
