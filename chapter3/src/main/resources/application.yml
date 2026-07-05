@@ -1,0 +1,17 @@
+spring:
+  ai:
+    # 실행할 Step 선택 - 3장: ch3-step1 ~ ch3-step6 / ch3-final
+    cli:
+      step: ch3-final
+    model:
+      chat: ollama     # 채팅 모델 제공자 선택
+      embedding: ollama  # 임베딩 모델 제공자 선택
+    rag:
+      documents-dir: src/main/resources/data  # 오프라인 인덱싱 대상 문서 디렉터리
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        think: false         # 추론 비활성
+        model: qwen3.5:4b
+      embedding:
+        model: bge-m3

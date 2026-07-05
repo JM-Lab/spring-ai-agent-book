@@ -1,0 +1,21 @@
+{
+  "store": {
+    "name": "Bike Shop",
+    "bikes": [
+      {
+        "id": 1,
+        "brand": "Trek",
+        "model": "Mountain X1",
+        "description": "산악 라이딩을 위한 고성능 자전거입니다.",
+        "price": 1200000
+      },
+      {
+        "id": 2,
+        "brand": "Cannondale",
+        "model": "Road R2",
+        "description": "경주용 도로 주행에 적합한 공기역학적 자전거입니다.",
+        "price": 1500000
+      }
+    ]
+  }
+}
