@@ -1,0 +1,54 @@
+# --- [클라이언트 모드(기본)] ---
+spring:
+  main:
+    web-application-type: none # CLI이므로 웹 서버 미구동
+  ai:
+    cli.step: ch5-final
+    model:
+      chat: ollama
+      embedding: none # 문서 임베딩 처리는 서버로 전적으로 위임
+    mcp:
+      client:
+        enabled: true
+        name: chapter5-mcp-client
+        version: 0.1.0
+        type: SYNC
+        initialized: true
+        request-timeout: 30s
+        toolcallback:
+          enabled: true
+        streamable-http:
+          connections:
+            rag:
+              url: http://localhost:8085
+              endpoint: /mcp
+      server:
+        enabled: false # 클라이언트 모드에서는 서버 기능 비활성화
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        think: false         # 추론(thinking) 비활성
+        model: qwen3.5:4b
+---
+# --- [서버 모드] ---
+spring:
+  config.activate.on-profile: server
+  main.web-application-type: servlet
+server.port: 8085
+spring.ai:
+  model:
+    chat: ollama
+    embedding: ollama # 벡터 검색을 위한 임베딩 활성화
+  ollama:
+    embedding:
+      model: bge-m3
+  mcp:
+    client.enabled: false
+    server:
+      enabled: true
+      name: chapter5-rag-mcp-server
+      version: 0.1.0
+      type: SYNC
+      protocol: STREAMABLE # Streamable HTTP 규격 사용
+      instructions: "RAG 문서 ETL과 벡터 검색, 근거 기반 답변을 MCP 툴과 리소스로 제공하는 실습 서버입니다."
+      streamable-http.mcp-endpoint: /mcp
