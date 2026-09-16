@@ -1,6 +1,6 @@
 # Spring AI Agent Book
 
-책 **「스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드」**(위키북스, 2026)의 실습 코드 저장소입니다. 책 소개는 [출판사 도서 페이지](https://wikibook.co.kr/springai-agents/)에서 볼 수 있습니다. Spring AI 2.0.0 GA를 기준으로, 로컬 Ollama 모델만으로 기본 채팅부터 RAG, 툴 호출, MCP, 엔터프라이즈 멀티 에이전트까지 단계별로 구현합니다.
+책 **「스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드」**(위키북스, 2026)의 실습 코드 저장소입니다. 책 소개는 [출판사 도서 페이지](https://wikibook.co.kr/springai-agents/), 장별 핵심 정리는 [온라인 가이드](https://jm-lab.github.io/spring-ai-agent-book/)에서 볼 수 있습니다. Spring AI 2.0.0 GA를 기준으로, 로컬 Ollama 모델만으로 기본 채팅부터 RAG, 툴 호출, MCP, 엔터프라이즈 멀티 에이전트까지 단계별로 구현합니다.
 
 각 장의 프로젝트는 독립적인 Maven 프로젝트이며, 폴더 안에서 `./mvnw spring-boot:run`으로 바로 실행할 수 있습니다.
 

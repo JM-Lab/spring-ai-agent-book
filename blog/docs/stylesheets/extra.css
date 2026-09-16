@@ -1,0 +1,58 @@
+/* 글꼴: 본문 Pretendard(OFL, 공식 CDN), 코드 Book Code(D2Coding 부분 글꼴, OFL, assets/fonts/OFL.txt) */
+@font-face { font-family: "Book Code"; src: url("../assets/fonts/BookCode-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Book Code"; src: url("../assets/fonts/BookCode-Bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+:root {
+  --md-text-font: "Pretendard Variable", Pretendard;
+  --md-code-font: "Book Code", D2Coding;
+}
+.md-typeset { letter-spacing: -.005em; }
+.md-typeset h1 { font-weight: 700; color: var(--md-default-fg-color); letter-spacing: -.02em; }
+.md-typeset h2 { font-weight: 700; letter-spacing: -.015em; }
+.md-typeset h3 { font-weight: 600; }
+.md-typeset code, .md-typeset pre, .md-typeset kbd { font-variant-ligatures: none; }
+/* 홈 히어로 */
+.md-typeset .hero { text-align: center; margin: .5rem 0 2.5rem; }
+.md-typeset .hero .eyebrow { color: var(--md-accent-fg-color); font-weight: 700; font-size: .8rem; letter-spacing: .04em; margin: 0 0 .5rem; }
+.md-typeset .hero h1 { font-size: 2.3rem; line-height: 1.3; margin: 0 0 1rem; font-weight: 800; letter-spacing: -.02em; color: var(--md-default-fg-color); }
+.md-typeset .hero h1 .headerlink { display: none; }
+.md-typeset .hero .lead { font-size: .95rem; line-height: 1.8; color: var(--md-default-fg-color--light); max-width: 38rem; margin: 0 auto 1.4rem; }
+.md-typeset .hero .cta { margin: 0 0 2.2rem; }
+.md-typeset .hero .cta .md-button { margin: .25rem .3rem; }
+.md-typeset .hero-figure { margin: 0 auto; }
+.md-typeset .hero-figure img { border-radius: .5rem; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+.md-typeset .hero-figure figcaption, .md-typeset .wide-figure figcaption { font-size: .72rem; color: var(--md-default-fg-color--light); margin-top: .5rem; max-width: none; }
+@media screen and (max-width: 44.9375em) { .md-typeset .hero h1 { font-size: 1.65rem; } }
+.md-typeset .hero .eyebrow, .md-typeset .hero h1, .md-typeset .hero .lead { word-break: keep-all; }  /* 한글 어절 단위로 줄 바꿈 */
+.md-content__inner:has(.hero) > .md-content__button { display: none; }  /* 홈에서는 편집 아이콘을 숨긴다 */
+/* 넓은 그림: 한 줄에 하나, 본문 폭 전체 */
+.md-typeset .wide-figure { margin: 1.5rem auto; }  /* Material figure는 width: fit-content라 좌우 auto여야 작은 그림도 가운데 온다 */
+.md-typeset .wide-figure img { max-width: 100%; height: auto; display: block; margin: 0 auto; border: 1px solid var(--md-default-fg-color--lightest); border-radius: .4rem; }  /* 작은 원본은 늘리지 않는다 */
+.md-typeset .wide-figure.tall img { max-width: min(56rem, 100%); display: block; margin: 0 auto; }  /* 좁은 화면에서는 본문 폭까지만 */
+/* 티어 카드 색 */
+.tier-badge { display:inline-block; font-weight:700; font-size:.7rem; padding:.1rem .5rem; border-radius:.3rem; color:#fff; margin-right:.4rem; vertical-align:middle; }
+.t1 { background:#5b7a9a; } .t2 { background:#6db33f; } .t3 { background:#2e5a8c; } .t4 { background:#7d8a96; } .tx { background:#7b5ea7; }
+/* 장 카드 안 글 목록 */
+.grid.cards ol { list-style: decimal; padding-left: 1.1rem; margin: .4rem 0 0; }
+.grid.cards ol li { margin: .15rem 0; font-size: .78rem; }
+.chapter-no { font-size:.7rem; color: var(--md-default-fg-color--light); letter-spacing:.05em; }
+/* 책 카드 */
+.book-card { display:flex; gap:1.2rem; align-items:flex-start; border:1px solid var(--md-default-fg-color--lightest); border-radius:.4rem; padding:1rem 1.2rem; margin:1rem 0; }
+.book-card .cover-wrap { flex:0 0 130px; width:130px; }
+.book-card .cover-wrap img { width:130px; height:auto; display:block; border-radius:.25rem; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+.book-card p { margin:.3rem 0; }
+/* 글 머리: 티어 칩과 책 범위 */
+.md-typeset .post-meta { font-size: .72rem; color: var(--md-default-fg-color--light); margin: -.6rem 0 1.4rem; }
+.md-typeset .tier-chip { display: inline-block; font-weight: 700; font-size: .66rem; padding: .05rem .45rem; border-radius: .3rem; color: #fff; margin-right: .35rem; }
+.md-typeset .tier-chip.t1 { background:#5b7a9a; } .md-typeset .tier-chip.t2 { background:#6db33f; } .md-typeset .tier-chip.t3 { background:#2e5a8c; } .md-typeset .tier-chip.t4 { background:#7d8a96; } .md-typeset .tier-chip.tx { background:#7b5ea7; }
+/* 책 상자 admonition */
+:root { --md-admonition-icon--book: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 2a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h12M9 4H6v8l1.5-1.5L9 12V4z"/></svg>'); }
+.md-typeset .admonition.book, .md-typeset details.book { border-color: #6db33f; }
+.md-typeset .book > .admonition-title, .md-typeset .book > summary { background-color: rgba(109,179,63,.1); }
+.md-typeset .book > .admonition-title::before, .md-typeset .book > summary::before { background-color: #6db33f; -webkit-mask-image: var(--md-admonition-icon--book); mask-image: var(--md-admonition-icon--book); }
+/* 코드 아래 전체 코드 링크 */
+.md-typeset .code-link { display: block; font-size: .68rem; margin: -.6rem 0 1rem; text-align: right; }
+.md-typeset .tier-chip.all { background: linear-gradient(90deg, #5b7a9a, #6db33f 45%, #2e5a8c 75%, #7d8a96); }
+/* 표 안의 코드는 줄을 바꾸지 않는다. 좁은 화면에서는 표가 가로로 스크롤된다 */
+.md-typeset table:not([class]) td code, .md-typeset table:not([class]) th code { white-space: nowrap; }
+/* 좁은 화면(폰)에서는 책 카드의 표지와 글을 위아래로 놓는다 */
+@media screen and (max-width: 29.9375em) { .book-card { flex-direction: column; align-items: center; text-align: center; word-break: keep-all; } .book-card .cover-wrap { flex-basis: auto; } }

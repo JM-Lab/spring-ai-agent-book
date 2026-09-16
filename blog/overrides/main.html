@@ -1,0 +1,42 @@
+{#- 검색 엔진과 소셜 미리보기용 메타 태그, 구조화 데이터(JSON-LD). 값은 mkdocs.yml과 글의 front matter에서 온다. -#}
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {%- set page_title = config.site_name if page.is_homepage else page.title ~ " - " ~ config.site_name -%}
+  {%- set description = page.meta.description if page.meta and page.meta.description else config.site_description -%}
+  {%- set og_image = config.site_url ~ "assets/img/og-image.jpg" -%}
+  {%- set author = {"@type": "Person", "name": "허제민", "alternateName": "Jemin Huh", "url": config.site_url ~ "about/",
+                    "sameAs": ["https://github.com/JM-Lab", "https://www.linkedin.com/in/jmlab"]} -%}
+  {%- set book = {"@type": "Book", "name": "스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드", "author": author,
+                  "publisher": {"@type": "Organization", "name": "위키북스"}, "isbn": "9791158396961", "datePublished": "2026-09-17",
+                  "inLanguage": "ko", "numberOfPages": 692, "url": "https://wikibook.co.kr/springai-agents/",
+                  "image": config.site_url ~ "assets/img/cover.jpg"} -%}
+  <meta property="og:type" content="{{ 'website' if page.is_homepage else 'article' }}">
+  <meta property="og:site_name" content="{{ config.site_name | e }}">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="{{ page_title | e }}">
+  <meta property="og:description" content="{{ description | e }}">
+  {%- if page.canonical_url %}
+  <meta property="og:url" content="{{ page.canonical_url }}">
+  {%- endif %}
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ config.site_name | e }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page_title | e }}">
+  <meta name="twitter:description" content="{{ description | e }}">
+  <meta name="twitter:image" content="{{ og_image }}">
+  {%- if config.extra.google_site_verification %}
+  <meta name="google-site-verification" content="{{ config.extra.google_site_verification | e }}">
+  {%- endif %}
+  {%- if page.is_homepage %}
+  <script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "WebSite", "name": config.site_name, "url": config.site_url,
+      "description": config.site_description, "inLanguage": "ko", "author": author, "about": book} | tojson }}</script>
+  {%- elif page.canonical_url %}
+  {%- set page_type = "TechArticle" if page.meta and page.meta.tags else "WebPage" %}
+  <script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": page_type, "headline": page.title, "description": description,
+      "inLanguage": "ko", "url": page.canonical_url, "mainEntityOfPage": page.canonical_url, "image": og_image, "author": author,
+      "isPartOf": {"@type": "WebSite", "name": config.site_name, "url": config.site_url}, "about": book} | tojson }}</script>
+  {%- endif %}
+{% endblock %}

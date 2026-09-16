@@ -1,0 +1,145 @@
+site_name: 스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드
+site_description: 책 「스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드」(위키북스)의 핵심을 정리한 온라인 가이드. 엔터프라이즈 AI 에이전트 시스템을 4-티어 아키텍처로 설계하고 스프링 AI 2.0으로 구현하는 방법을 책의 장을 따라 ChatClient, RAG, 툴 호출, MCP, AI 에이전트 순서로 정리합니다.
+site_author: 허제민(Jemin Huh)
+site_url: https://jm-lab.github.io/spring-ai-agent-book/
+repo_url: https://github.com/JM-Lab/spring-ai-agent-book
+repo_name: JM-Lab/spring-ai-agent-book
+edit_uri: edit/main/blog/docs/
+copyright: '© 2026 허제민. 책 「스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드」(위키북스) 기반.'
+
+theme:
+  name: material
+  language: ko
+  custom_dir: overrides
+  font: false   # 구글 폰트 대신 본문 Pretendard(CDN), 코드 Book Code(D2Coding 부분 글꼴, 자체 호스팅)
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/layers-triple
+  favicon: assets/favicon.svg
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: 다크 모드로 전환
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-sunny
+        name: 라이트 모드로 전환
+  features:
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - toc.follow
+    - content.code.copy
+    - content.action.edit
+    - search.suggest
+    - search.highlight
+
+extra_css:
+  - https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css
+  - stylesheets/extra.css
+
+hooks:
+  - hooks/llms_txt.py   # 빌드 때 llms.txt, llms-full.txt 생성(LLM 크롤러용)
+
+# 두 값은 페이지 소스에 그대로 노출되는 값이라 비밀이 아니다. 바꾸려면 여기만 고친다.
+extra:
+  analytics:
+    provider: google
+    property: G-9SGFZFYQ23                        # GA4 측정 ID(스트림 spring-ai-book-blog)
+  google_site_verification: bO8vYFDhRUYAm1md41Vq2CPgos2IQ9JWD-fQ7lzk3Eg   # 구글 서치 콘솔 HTML 태그의 content 값(overrides/main.html이 meta 태그로 넣는다)
+
+plugins:
+  - search:
+      lang: ko
+      # 괄호, 콜론, 슬래시, 카멜케이스 경계에서도 단어를 나눠 "HITL", "Elicitation", "Advisor"처럼 붙어 있는 단어도 검색되게 한다(Material 문서의 권장 구분자)
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - tags
+  - glightbox
+  # 다국어: 지금은 한국어만 빌드. en/ja/zh는 접미사 파일(index.en.md 등)을 추가하고 아래 주석을 풀면 된다.
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      languages:
+        - locale: ko
+          default: true
+          name: 한국어
+          build: true
+        # - locale: en
+        #   name: English
+        #   build: true
+        # - locale: ja
+        #   name: 日本語
+        #   build: true
+        # - locale: zh
+        #   name: 中文
+        #   build: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: [!relative $config_dir/..]   # 저장소 루트 기준으로 예제 코드를 직접 포함한다
+      check_paths: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - 홈: index.md
+  - "1장 AI 에이전트, 새로운 패러다임의 시작":
+      - "LLM 호출에서 AI 에이전트로, 그리고 왜 자바 개발자는 스프링 AI인가": part1/01-from-llm-calls-to-ai-agents-why-spring-ai.md
+      - "스프링 AI 1.0에서 2.0으로, 무엇이 달라졌나": part1/02-whats-new-in-spring-ai-2-0.md
+  - "2장 스프링 AI 프레임워크":
+      - "ChatModel과 ChatClient, 그리고 프롬프트 엔지니어링": part2/03-chatmodel-chatclient-and-prompt-engineering.md
+      - "토큰과 구조화한 출력: 모델의 답을 자바 객체로 받기": part2/04-tokens-and-structured-output.md
+      - "대화 메모리와 어드바이저 체인: 스프링 AI의 코어": part2/05-chat-memory-and-advisor-chain.md
+  - "3장 스프링 AI와 RAG":
+      - "RAG 아키텍처와 ETL 파이프라인: 문서를 AI의 지식으로": part3/06-rag-architecture-and-etl-pipeline.md
+      - "임베딩 모델과 벡터 데이터베이스": part3/07-embedding-models-and-vector-stores.md
+      - "Naive RAG에서 모듈러 RAG로: 스프링 AI RAG 프레임워크": part3/08-from-naive-rag-to-modular-rag.md
+  - "4장 툴 호출":
+      - "툴 호출 설계: LLM이 현실 세계와 연결되는 방법": part4/09-tool-calling-design-in-spring-ai.md
+      - "툴 구현과 실행 제어: @Tool에서 ToolCallingManager까지": part4/10-tool-implementation-and-execution-control.md
+  - "5장 스프링 AI MCP":
+      - "MCP 기본과 스프링 AI MCP 클라이언트": part5/11-mcp-basics-and-spring-ai-mcp-client.md
+      - "스프링 AI로 MCP 서버 만들기: 부트 스타터부터 애너테이션까지": part5/12-building-an-mcp-server-with-spring-ai.md
+      - "MCP 보안: OAuth2와 JWT로 지키는 MCP 클라이언트와 서버": part5/13-mcp-security-oauth2-and-jwt.md
+  - "6장 AI 에이전트":
+      - "AI 에이전트 서비스 4-티어 아키텍처": part6/14-four-tier-architecture-for-ai-agent-systems.md
+      - "에이전트 실행 루프와 컨텍스트 엔지니어링": part6/15-agent-loop-and-context-engineering.md
+      - "재귀적 어드바이저와 툴 루프 제어": part6/16-recursive-advisor-and-tool-loop-control.md
+      - "스프링 AI 에이전트 아키텍처와 구현, 그리고 동적 툴 탐색": part6/17-spring-ai-agent-architecture-and-dynamic-tool-discovery.md
+      - "사용자 개입(HITL): MCP Elicitation으로 만드는 승인 게이트": part6/18-human-in-the-loop-approval-gate-with-mcp-elicitation.md
+      - "에이전트 스킬: 범용 스킬로 에이전트의 능력을 확장하기": part6/19-agent-skills-extending-capabilities.md
+      - "엔터프라이즈 스프링 AI 에이전트 CLI: 멀티 에이전트와 메타 툴 오케스트레이션": part6/20-enterprise-spring-ai-agent-cli-multi-agent-and-meta-tools.md
+      - "AI 에이전트 관측 가능성: Micrometer, OTel GenAI 규약, OTLP": part6/21-observability-for-ai-agents-micrometer-otel-otlp.md
+  - "부록":
+      - "부록: 오픈AI 전환, AI 평가, 외부 AI 에이전트 연결": appendix/22-openai-evaluation-and-external-agents.md
+      - "부록: 스프링 AI 플레이그라운드": appendix/23-spring-ai-playground.md
+  - 책 소개: book.md
+  - 용어 찾아보기: glossary.md
+  - 저자: about.md
