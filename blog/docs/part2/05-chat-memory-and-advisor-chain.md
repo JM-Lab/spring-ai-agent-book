@@ -51,7 +51,7 @@ LLM은 상태를 기억하지 않습니다. 호출은 매번 독립적이라서,
 `ChatMemory`와 저장소는 기록을 보관할 뿐이고, 실제 대화에 기억을 끼워 넣는 일은 어드바이저가 합니다. 스프링 AI는 두 기억에 맞춘 어드바이저를 따로 제공합니다.
 
 - **`MessageChatMemoryAdvisor`**: 단기 기억의 표준 방식으로, 최근 대화를 `List<Message>` 형태 그대로 프롬프트에 넣습니다. 사용자와 어시스턴트의 발화 구분이 살아 있어 "그거"나 "아니" 같은 짧은 말도 문맥 속에서 해석됩니다.
-- **`VectorStoreChatMemoryAdvisor`**: 윈도우 밖으로 밀려난 과거를 다룹니다. 대화를 벡터로 저장해 두고, 새 질문과 의미가 가까운 과거 대화를 검색해 시스템 메시지에 넣습니다. 벡터 검색은 3장 RAG에서 자세히 다룹니다.
+- **`VectorStoreChatMemoryAdvisor`**: 윈도우 밖의 과거까지 맡습니다. 대화를 벡터로 저장해 두고, 새 질문과 의미가 가까운 과거 대화를 검색해 시스템 메시지에 넣습니다. 벡터 검색은 3장 RAG에서 자세히 다룹니다.
 
 예제 저장소의 Step 4는 `MessageChatMemoryAdvisor`로 CLI 챗봇에 단기 기억을 붙입니다.
 
@@ -180,4 +180,5 @@ Step 5는 내장 `SimpleLoggerAdvisor`와 이 커스텀 어드바이저를 함�
 
 ## 참고 자료
 
+- [Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html): 스프링 AI 레퍼런스의 대화 메모리 문서(chat memory와 chat history의 구분)
 - [Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html): 스프링 AI 레퍼런스의 어드바이저 API 문서

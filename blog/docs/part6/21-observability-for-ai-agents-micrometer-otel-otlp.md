@@ -33,9 +33,9 @@ tags:
 
 한 턴을 기록하는 `spring.ai.chat.client` 스팬 아래에는 그 턴에서 일어난 모델 호출들이 자식 스팬으로 붙습니다. 그래서 에이전트 한 턴과 그 안의 모델 호출을 한 트레이스 안에서 이어 볼 수 있습니다.
 
-더 눈여겨볼 점은 이름 체계입니다. 모델 호출에 붙는 `gen_ai.request.model`, `gen_ai.usage.total_tokens` 같은 속성과 `gen_ai.client.token.usage` 메트릭은 OpenTelemetry의 생성형 AI 시맨틱 규약(OTel GenAI Semantic Conventions)에서 정한 이름입니다. 특정 제품 전용 형식이 아니므로 여러 관측 시스템이 같은 뜻으로 해석할 수 있습니다.
+더 눈여겨볼 점은 이름 체계입니다. 모델 호출에 붙는 `gen_ai.request.model`, `gen_ai.usage.input_tokens` 같은 속성과 `gen_ai.client.token.usage` 메트릭은 OpenTelemetry의 생성형 AI 시맨틱 규약(OTel GenAI Semantic Conventions)에서 정한 이름입니다. 특정 제품 전용 형식이 아니므로 여러 관측 시스템이 같은 뜻으로 해석할 수 있습니다.
 
-프롬프트와 응답 내용은 기본으로 기록하지 않습니다. 사용자 입력, 검색 문서, 내부 업무 데이터가 그대로 담길 수 있고 크기도 빠르게 불어나기 때문에, 기본값은 토큰 수, 모델 이름, 소요 시간 같은 메타데이터만 남깁니다. `spring.ai.chat.client.observations.log-prompt`, `spring.ai.chat.client.observations.log-completion`, `spring.ai.tools.observations.include-content`를 켜면 내용도 스팬 속성으로 남습니다. 다만 민감 정보가 외부 시스템까지 흘러가므로, 실제 서비스에서 켤 때는 마스킹과 접근 권한, 데이터 보관 기간을 같이 정해 두어야 합니다.
+프롬프트와 응답 내용은 기본으로 기록하지 않습니다. 사용자 입력, 검색 문서, 내부 업무 데이터가 그대로 담길 수 있고 크기도 빠르게 불어나기 때문에, 기본값은 토큰 수, 모델 이름, 소요 시간 같은 메타데이터만 남깁니다. `spring.ai.chat.client.observations.log-prompt`, `spring.ai.chat.client.observations.log-completion`, `spring.ai.tools.observations.include-content`를 켜면 내용도 기록됩니다. 다만 민감 정보가 외부 시스템까지 흘러가므로, 실제 서비스에서 켤 때는 마스킹과 접근 권한, 데이터 보관 기간을 같이 정해 두어야 합니다.
 
 ## OTLP 내보내기 설정
 

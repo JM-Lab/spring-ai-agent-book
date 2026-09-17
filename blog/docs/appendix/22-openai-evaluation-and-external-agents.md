@@ -77,14 +77,14 @@ claude mcp add --transport http book-knowledge http://localhost:8086/mcp
 
 클로드 코드는 원격 HTTP 서버를 `claude mcp add --transport http` 명령으로 등록합니다. 이름은 자유지만 역할이 드러나는 book-knowledge 같은 이름이 관리하기 편합니다. 등록 목록은 `claude mcp list`로, 연결 상태는 대화 중 `/mcp`로 확인합니다. 이제 "재고 정책 문서에서 안전재고 기준을 찾아줘"처럼 물으면 클로드 코드가 서버의 툴을 찾아 호출하고 그 결과로 답합니다. 6장에서 만든 모델, 툴, 루프의 구조가 외부 에이전트에서도 같은 방식으로 돌아가는 것입니다.
 
-다른 클라이언트도 주소를 알려 주는 방법만 다릅니다. 클로드 데스크톱은 Settings > Connectors > Add custom connector에서 원격 MCP 서버 주소를 입력합니다. 설정 파일을 쓰려면 `claude_desktop_config.json`에 `mcp-remote` 브리지를 등록하고 앱을 다시 시작합니다. 오픈클로는 `openclaw mcp set` 명령에 서버 이름과 함께 URL, 전송 방식을 담은 JSON을 넘깁니다. 코덱스는 CLI와 IDE 확장이 같은 설정을 공유합니다. `~/.codex/config.toml`이나 프로젝트의 `.codex/config.toml`에 URL을 적으면 되고, 버전에 따라 `codex mcp add` 명령으로도 등록할 수 있습니다.
+다른 클라이언트도 주소를 알려 주는 방법만 다릅니다. 클로드 데스크톱은 `claude_desktop_config.json`에 `mcp-remote` 브리지를 등록하고 앱을 다시 시작합니다. Settings > Connectors의 커스텀 커넥터는 이 실습의 경로가 아닙니다. 내 컴퓨터가 아니라 앤트로픽 인프라에서 서버에 접속하므로 localhost 주소로는 연결되지 않습니다. 오픈클로는 `openclaw mcp set` 명령에 서버 이름과 함께 URL, 전송 방식을 담은 JSON을 넘깁니다. 코덱스는 CLI와 IDE 확장이 같은 설정을 공유합니다. `~/.codex/config.toml`이나 프로젝트의 `.codex/config.toml`에 URL을 적으면 되고, 버전에 따라 `codex mcp add` 명령으로도 등록할 수 있습니다.
 
 ```toml title="~/.codex/config.toml"
 --8<-- "README.md:113:114"
 ```
 <span class="code-link">[전체 코드 보기](https://github.com/JM-Lab/spring-ai-agent-book/blob/main/README.md#mcp-서버를-외부-ai-클라이언트에-연결하기)</span>
 
-연결할 때 챙길 점도 있습니다. 5장 서버와 6장 운영 서버는 둘 다 8085 포트라 동시에 띄우지 않습니다. 운영 서버에서 `place_purchase_order`를 호출하면 주문에 앞서 MCP 추가 정보 요청(Elicitation)으로 [사용자 승인](../part6/18-human-in-the-loop-approval-gate-with-mcp-elicitation.md)을 묻습니다. 이 기능을 지원하지 않는 클라이언트라면 `check_stock` 같은 조회 툴로 먼저 확인합니다. 예제 서버는 인증 없이 로컬 실습용으로 열려 있으므로, 다른 네트워크에서 접근하게 하려면 [MCP 보안 구성](../part5/13-mcp-security-oauth2-and-jwt.md)을 먼저 적용합니다. 서버와 클라이언트가 같은 머신에 있지 않거나 컨테이너로 나뉘어 있다면 주소의 localhost를 클라이언트에서 접근할 수 있는 호스트 이름으로 바꿉니다.
+연결할 때 챙길 점도 있습니다. 5장 서버와 6장 운영 서버는 둘 다 8085 포트라 동시에 띄우지 않습니다. 운영 서버에서 `place_purchase_order`를 호출하면 주문에 앞서 MCP 추가 정보 요청(Elicitation)으로 [사용자 승인](../part6/18-human-in-the-loop-approval-gate-with-mcp-elicitation.md)을 묻습니다. 이 기능을 지원하지 않는 클라이언트라면 `check_stock` 같은 조회 툴로 먼저 확인합니다. 예제 서버는 인증 없이 모든 네트워크 인터페이스에서 요청을 받으므로, 로컬 실습만 할 때는 `--server.address=127.0.0.1`로 루프백에만 묶을 수 있고, 다른 네트워크에서 접근하게 하려면 [MCP 보안 구성](../part5/13-mcp-security-oauth2-and-jwt.md)을 먼저 적용합니다. 서버와 클라이언트가 같은 머신에 있지 않거나 컨테이너로 나뉘어 있다면 주소의 localhost를 클라이언트에서 접근할 수 있는 호스트 이름으로 바꿉니다.
 
 ## 4-티어 아키텍처에서의 위치
 

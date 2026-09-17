@@ -121,14 +121,14 @@ Step 1의 `Ch6Step1_SpringAIAgent`는 "지금 한국 시간을 알려주고, SKU
 
 이제는 큐원3(qwen 3), GPT-OSS 같은 오픈소스 모델도 답하기 전에 스스로 검증하고 계획하는 추론 능력을 갖췄습니다. 이런 모델에게는 생각하라고 따로 지시할 필요가 없습니다. 개발자의 일은 판단 기준을 알려 주고, 툴 명세를 정확히 쓰고, 실행 결과와 실패 이력을 엮어 다음 추론의 환경을 만드는 쪽으로 옮겨 갑니다. 모델은 데이터베이스나 API를 직접 호출하지 못하므로, 추론을 실행으로 옮기고 결과를 컨텍스트로 돌려주는 루프는 여전히 시스템의 책임입니다.
 
-예제 저장소가 쓰는 qwen3 계열 모델도 답하기 전에 사고 단계를 거치며, `ThinkTraceAdvisor`가 이 사고를 CLI에 보여 줍니다.
+예제 저장소가 쓰는 `qwen3.5:4b` 모델도 답하기 전에 사고 단계를 거치며, `ThinkTraceAdvisor`가 이 사고를 CLI에 보여 줍니다.
 
 ```java title="ThinkTraceAdvisor.java"
 --8<-- "chapter6/src/main/java/kr/jmlab/spring/ai/agent/book/chapter6/orchestration/ThinkTraceAdvisor.java:44:72"
 ```
 <span class="code-link">[전체 코드 보기](https://github.com/JM-Lab/spring-ai-agent-book/blob/main/chapter6/src/main/java/kr/jmlab/spring/ai/agent/book/chapter6/orchestration/ThinkTraceAdvisor.java)</span>
 
-`OllamaChatModel`은 사고 토큰을 스트리밍 청크 메타데이터의 `thinking` 키에 담습니다. 라운드 단위로 합친 응답에서는 이 값이 빠지므로, 이 어드바이저는 원시 스트림을 직접 들여다보며 사고 토큰을 출력합니다. 툴 루프 안에서 라운드마다 실행되어 CLI에는 사고, 툴 호출, 다시 사고, 답변이 번갈아 찍힙니다. 생각과 행동이 번갈아 나타나는 이 흐름이 다음에 볼 리액트입니다.
+`OllamaChatModel`은 사고 토큰을 스트리밍 청크 메타데이터의 `thinking` 키에 담습니다. 라운드 단위로 합친 응답에는 이 값이 온전히 남지 않으므로, 이 어드바이저는 원시 스트림을 직접 들여다보며 사고 토큰을 출력합니다. 툴 루프 안에서 라운드마다 실행되어 CLI에는 사고, 툴 호출, 다시 사고, 답변이 번갈아 찍힙니다. 생각과 행동이 번갈아 나타나는 이 흐름이 다음에 볼 리액트입니다.
 
 ## 리액트: 생각을 행동으로 옮기는 방식
 
@@ -152,7 +152,7 @@ Step 1의 `Ch6Step1_SpringAIAgent`는 "지금 한국 시간을 알려주고, SKU
 <figcaption>컨텍스트의 내용이 전달되어 사용되는 영역</figcaption>
 </figure>
 
-빌드 명령과 코드 규칙을 적은 AGENTS.md 같은 지침 파일이 좋은 예입니다. 파일 내용은 모델에게 전달되지만, 어느 파일을 어떤 우선순위로 찾아 언제 넣을지는 시스템이 정합니다. 툴도 두 영역에 걸칩니다. 이름, 설명, 스키마는 모델의 판단 근거가 되고, 노출 필터링과 실행, 권한 제한은 시스템이 합니다. 삭제 권한이 없는 사용자의 요청에서 삭제 툴의 스키마를 아예 빼면, 모델은 그 툴이 있는지 모르니 호출할 수도 없습니다. 프롬프트에 삭제하지 말라고 쓰는 것이 부탁이라면 스키마를 빼는 것은 차단입니다.
+빌드 명령과 코드 규칙을 적은 AGENTS.md 같은 지침 파일이 좋은 예입니다. 파일 내용은 모델에게 전달되지만, 어느 파일을 어떤 우선순위로 찾아 언제 넣을지는 시스템이 정합니다. 툴도 두 영역에 걸칩니다. 이름, 설명, 스키마는 모델의 판단 근거가 되고, 노출 필터링과 실행, 권한 제한은 시스템이 합니다. 삭제 권한이 없는 사용자의 요청에서 삭제 툴의 스키마를 아예 빼면, 모델은 그 툴이 있는지 모르니 호출할 수도 없습니다. 프롬프트에 삭제하지 말라고 쓰는 것이 부탁이라면 스키마를 빼는 것은 차단입니다. 다만 이것이 권한 통제의 전부는 아닙니다. 모델이 보여 준 적 없는 툴 이름을 지어낼 수 있고 스프링 AI의 툴 리졸버가 그 이름을 애플리케이션 컨텍스트에서 찾아 줄 수도 있으므로, 실행 쪽에서 권한 검사를 따로 해야 합니다.
 
 루프를 돌수록 컨텍스트가 쌓여 토큰 한도를 넘기거나, 긴 컨텍스트 가운데 놓인 정보를 모델이 활용하지 못하는 중간 손실(Lost in the Middle)이 생깁니다. 슬라이딩 윈도우, 오래된 대화 요약, 핵심 사실 저장 같은 전략은 `ChatMemory`와 어드바이저 조합으로 구현할 수 있습니다. 단, 툴 실행이 실패한 기록은 남겨 둬야 모델이 다른 방법을 시도합니다. 컨텍스트는 대화 기록을 넘어 에이전트가 지금 어떤 상태인지 알려 주는 정보입니다.
 
@@ -177,4 +177,4 @@ Step 1의 `Ch6Step1_SpringAIAgent`는 "지금 한국 시간을 알려주고, SKU
 - [Building Effective Agents](https://docs.spring.io/spring-ai/reference/api/effective-agents.html): 워크플로 패턴의 스프링 AI 구현 안내
 - [Agentic Patterns](https://github.com/spring-projects/spring-ai-examples/tree/main/agentic-patterns): 워크플로 패턴 전체 예제 코드
 - [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629): 리액트 패턴을 제안한 논문(2022)
-- [Andrej Karpathy, context engineering](https://x.com/karpathy/status/1937902205765607626): LLM과 컨텍스트를 운영체제에 빗댄 글
+- [Andrej Karpathy, context engineering](https://x.com/karpathy/status/1937902205765607626): 컨텍스트 엔지니어링이라는 말을 지지한 글

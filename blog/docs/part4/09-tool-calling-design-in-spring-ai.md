@@ -66,7 +66,7 @@ LLM이 외부 시스템을 직접 다루지 못하는 이유는 세 가지입니
 
 `ToolDefinition.builder()`로 세 요소를 직접 정하고, `MethodToolCallback` 빌더에는 명세, 메타데이터, 실행할 메서드와 객체를 따로 넘깁니다. 모델이 보는 정보와 애플리케이션이 실행에 쓰는 정보의 구분이 코드에 그대로 드러납니다. `inputSchema`의 JSON은 요청 전체가 아니라 파라미터 부분의 조각이고, 이 툴은 파라미터가 없어 `properties`가 비어 있습니다. 오픈AI 같은 제공자에 보낼 때는 스프링 AI가 이름과 설명을 위에 두고 이 조각을 `parameters` 아래에 넣어 제공자 형식으로 조립합니다.
 
-다만 파라미터가 바뀔 때마다 JSON 문자열을 고치다 보면 괄호나 쉼표 실수가 잦습니다. 그래서 보통은 `JsonSchemaGenerator`가 메서드 파라미터나 객체 필드를 분석해 스키마를 만들게 합니다. 같은 `current_date` 툴을 애너테이션으로 선언한 코드입니다.
+다만 파라미터가 바뀔 때마다 JSON 문자열을 고치다 보면 괄호나 쉼표 실수가 잦습니다. 그래서 보통은 `JsonSchemaGenerator`가 메서드 파라미터나 객체 필드를 분석해 스키마를 만들게 합니다. 같은 `current_date` 툴과 시간대를 받는 `current_datetime` 툴을 애너테이션으로 선언한 코드입니다.
 
 ```java title="DateTimeTools.java"
 --8<-- "chapter4/src/main/java/kr/jmlab/spring/ai/agent/book/chapter4/examples/DateTimeTools.java:24:44"

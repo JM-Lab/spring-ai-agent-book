@@ -47,7 +47,8 @@ extra_css:
   - stylesheets/extra.css
 
 hooks:
-  - hooks/llms_txt.py   # 빌드 때 llms.txt, llms-full.txt 생성(LLM 크롤러용)
+  - hooks/llms_txt.py      # 빌드 때 언어별 llms.txt, llms-full.txt 생성(LLM 크롤러용)
+  - hooks/i18n_search.py   # 모든 언어를 빌드한 뒤 검색 색인을 언어별로 나눈다
 
 # 두 값은 페이지 소스에 그대로 노출되는 값이라 비밀이 아니다. 바꾸려면 여기만 고친다.
 extra:
@@ -63,7 +64,8 @@ plugins:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - tags
   - glightbox
-  # 다국어: 지금은 한국어만 빌드. en/ja/zh는 접미사 파일(index.en.md 등)을 추가하고 아래 주석을 풀면 된다.
+  # 다국어: 한국어가 정본이고 영어판은 같은 폴더의 접미사 파일(index.en.md 등)로 둔다.
+  # 영어판 주소는 /en/ 아래에 생기고, 메뉴 제목은 아래 en.nav가 맡는다. 글을 더하면 위 nav와 en.nav를 함께 고친다.
   - i18n:
       docs_structure: suffix
       fallback_to_default: true
@@ -73,15 +75,47 @@ plugins:
           default: true
           name: 한국어
           build: true
-        # - locale: en
-        #   name: English
-        #   build: true
-        # - locale: ja
-        #   name: 日本語
-        #   build: true
-        # - locale: zh
-        #   name: 中文
-        #   build: true
+        - locale: en
+          name: English
+          build: true
+          site_name: "The Complete Guide to AI Agent Development with Spring AI 2.0"
+          site_description: "An online guide to the key ideas of the Korean book The Complete Guide to AI Agent Development with Spring AI 2.0 (Wikibooks). It shows how to design enterprise AI agent systems with a 4-tier architecture and build them with Spring AI 2.0, following the book's chapters: ChatClient, RAG, tool calling, MCP, and AI agents."
+          copyright: "© 2026 Jemin Huh. Based on the Korean book The Complete Guide to AI Agent Development with Spring AI 2.0 (Wikibooks)."
+          nav:
+            - Home: index.md
+            - "Chapter 1. AI Agents: The Start of a New Paradigm":
+                - "From LLM Calls to AI Agents: Why Spring AI for Java Developers": part1/01-from-llm-calls-to-ai-agents-why-spring-ai.md
+                - "From Spring AI 1.0 to 2.0: What Changed": part1/02-whats-new-in-spring-ai-2-0.md
+            - "Chapter 2. The Spring AI Framework":
+                - "ChatModel, ChatClient, and Prompt Engineering": part2/03-chatmodel-chatclient-and-prompt-engineering.md
+                - "Tokens and Structured Output: Getting Model Answers as Java Objects": part2/04-tokens-and-structured-output.md
+                - "Chat Memory and the Advisor Chain: The Core of Spring AI": part2/05-chat-memory-and-advisor-chain.md
+            - "Chapter 3. Spring AI and RAG":
+                - "RAG Architecture and the ETL Pipeline: Turning Documents into Knowledge": part3/06-rag-architecture-and-etl-pipeline.md
+                - "Embedding Models and Vector Databases": part3/07-embedding-models-and-vector-stores.md
+                - "From Naive RAG to Modular RAG: The Spring AI RAG Framework": part3/08-from-naive-rag-to-modular-rag.md
+            - "Chapter 4. Tool Calling":
+                - "Designing Tool Calling: How LLMs Connect to the Real World": part4/09-tool-calling-design-in-spring-ai.md
+                - "Implementing Tools and Controlling Execution: From @Tool to ToolCallingManager": part4/10-tool-implementation-and-execution-control.md
+            - "Chapter 5. Spring AI MCP":
+                - "MCP Basics and the Spring AI MCP Client": part5/11-mcp-basics-and-spring-ai-mcp-client.md
+                - "Building an MCP Server with Spring AI: From Boot Starters to Annotations": part5/12-building-an-mcp-server-with-spring-ai.md
+                - "MCP Security: Protecting MCP Clients and Servers with OAuth2 and JWT": part5/13-mcp-security-oauth2-and-jwt.md
+            - "Chapter 6. AI Agents":
+                - "4-Tier Architecture for AI Agent Systems": part6/14-four-tier-architecture-for-ai-agent-systems.md
+                - "The Agent Loop and Context Engineering": part6/15-agent-loop-and-context-engineering.md
+                - "Recursive Advisors and Tool Loop Control": part6/16-recursive-advisor-and-tool-loop-control.md
+                - "Spring AI Agent Architecture, Implementation, and Dynamic Tool Discovery": part6/17-spring-ai-agent-architecture-and-dynamic-tool-discovery.md
+                - "Human-in-the-Loop (HITL): An Approval Gate with MCP Elicitation": part6/18-human-in-the-loop-approval-gate-with-mcp-elicitation.md
+                - "Agent Skills: Extending Agent Capabilities with Reusable Skills": part6/19-agent-skills-extending-capabilities.md
+                - "An Enterprise Spring AI Agent CLI: Multi-Agent and Meta-Tool Orchestration": part6/20-enterprise-spring-ai-agent-cli-multi-agent-and-meta-tools.md
+                - "Observability for AI Agents: Micrometer, OTel GenAI Semantic Conventions, and OTLP": part6/21-observability-for-ai-agents-micrometer-otel-otlp.md
+            - "Appendix":
+                - "Appendix: Switching to OpenAI, AI Evaluation, and Connecting External AI Agents": appendix/22-openai-evaluation-and-external-agents.md
+                - "Appendix: Spring AI Playground": appendix/23-spring-ai-playground.md
+            - About the Book: book.md
+            - Glossary: glossary.md
+            - About the Author: about.md
 
 markdown_extensions:
   - admonition

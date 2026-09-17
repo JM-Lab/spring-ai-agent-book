@@ -12,7 +12,7 @@
 .md-typeset code, .md-typeset pre, .md-typeset kbd { font-variant-ligatures: none; }
 /* 홈 히어로 */
 .md-typeset .hero { text-align: center; margin: .5rem 0 2.5rem; }
-.md-typeset .hero .eyebrow { color: var(--md-accent-fg-color); font-weight: 700; font-size: .8rem; letter-spacing: .04em; margin: 0 0 .5rem; }
+.md-typeset .hero .eyebrow { color: var(--md-accent-fg-color); font-weight: 700; font-size: 1.05rem; letter-spacing: .01em; margin: 0 0 .6rem; }  /* 본문 소개 문단(.95rem)보다 커야 제목 위 한 줄로 읽힌다 */
 .md-typeset .hero h1 { font-size: 2.3rem; line-height: 1.3; margin: 0 0 1rem; font-weight: 800; letter-spacing: -.02em; color: var(--md-default-fg-color); }
 .md-typeset .hero h1 .headerlink { display: none; }
 .md-typeset .hero .lead { font-size: .95rem; line-height: 1.8; color: var(--md-default-fg-color--light); max-width: 38rem; margin: 0 auto 1.4rem; }
@@ -21,8 +21,9 @@
 .md-typeset .hero-figure { margin: 0 auto; }
 .md-typeset .hero-figure img { border-radius: .5rem; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
 .md-typeset .hero-figure figcaption, .md-typeset .wide-figure figcaption { font-size: .72rem; color: var(--md-default-fg-color--light); margin-top: .5rem; max-width: none; }
-@media screen and (max-width: 44.9375em) { .md-typeset .hero h1 { font-size: 1.65rem; } }
+@media screen and (max-width: 44.9375em) { .md-typeset .hero h1 { font-size: 1.65rem; } .md-typeset .hero .eyebrow { font-size: .9rem; } }
 .md-typeset .hero .eyebrow, .md-typeset .hero h1, .md-typeset .hero .lead { word-break: keep-all; }  /* 한글 어절 단위로 줄 바꿈 */
+.md-typeset .hero .eyebrow { text-wrap: balance; }  /* 좁은 화면에서 두 줄로 나뉘면 줄 길이를 고르게 */
 .md-content__inner:has(.hero) > .md-content__button { display: none; }  /* 홈에서는 편집 아이콘을 숨긴다 */
 /* 넓은 그림: 한 줄에 하나, 본문 폭 전체 */
 .md-typeset .wide-figure { margin: 1.5rem auto; }  /* Material figure는 width: fit-content라 좌우 auto여야 작은 그림도 가운데 온다 */

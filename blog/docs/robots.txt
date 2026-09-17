@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://jm-lab.github.io/spring-ai-agent-book/sitemap.xml

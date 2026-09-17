@@ -1,19 +1,74 @@
-{#- 검색 엔진과 소셜 미리보기용 메타 태그, 구조화 데이터(JSON-LD). 값은 mkdocs.yml과 글의 front matter에서 온다. -#}
+{#- 검색 엔진과 소셜 미리보기용 메타 태그, 구조화 데이터(JSON-LD), 영어판 안내 배너, 언어별 검색 색인 연결. 값은 mkdocs.yml과 글의 front matter에서 온다. -#}
 {% extends "base.html" %}
 
+{#- 페이지 언어. i18n 플러그인이 페이지마다 넣어 주고, 404처럼 플러그인이 모르는 페이지는 테마 언어를 쓴다. -#}
+{% macro page_locale() -%}
+  {{- i18n_page_locale if i18n_page_locale is defined else config.theme.language -}}
+{%- endmacro %}
+
+{#- 처음 방문한 사람의 언어 선택. 브라우저 언어 목록에 한국어가 있으면 한국어판, 없으면 영어판을 보여 준다.
+    언어 메뉴나 "Read the Korean original" 링크(hreflang이 붙은 링크)로 직접 고르면 그 선택을 기억하고 다시 옮기지 않는다.
+    검색 엔진과 링크 미리보기 로봇은 옮기지 않는다(구글은 언어 자동 이동이 다른 언어판의 색인을 막을 수 있다고 안내한다).
+    GA가 방문을 기록하기 전에 옮겨야 하므로 대체 언어 링크가 있는 site_meta 블록 바로 뒤에서 실행한다. -#}
+{% block site_meta %}
+  {{ super() }}
+  {%- if i18n_page_locale is defined %}
+  <script>
+    (function () {
+      var pageLanguage = "{{ page_locale() }}";
+      var storageKey = "spring-ai-agent-book.language";
+      if (/bot|crawl|spider|slurp|scrap|fetch|preview|inspection|lighthouse|headless|yeti|daum|mediapartners|apis-google|googleother|anthropic-ai|cohere-ai|facebookexternalhit/i.test(navigator.userAgent)) {
+        return;
+      }
+      function readChoice() {
+        try { return localStorage.getItem(storageKey); } catch (error) { return null; }
+      }
+      function saveChoice(language) {
+        try { localStorage.setItem(storageKey, language); } catch (error) { /* 저장할 수 없으면 매번 브라우저 언어로 정한다 */ }
+      }
+      document.addEventListener("click", function (event) {
+        var link = event.target.closest ? event.target.closest("a[hreflang]") : null;
+        if (link && (link.hreflang === "ko" || link.hreflang === "en")) {
+          saveChoice(link.hreflang);
+        }
+      }, true);
+      var language = readChoice();
+      if (language !== "ko" && language !== "en") {
+        var browserLanguages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+        language = browserLanguages.some(function (tag) { return /^ko\b/i.test(tag); }) ? "ko" : "en";
+        saveChoice(language);
+      }
+      if (language === pageLanguage) {
+        return;
+      }
+      var alternate = document.querySelector('link[rel="alternate"][hreflang="' + language + '"]');
+      if (alternate && alternate.href) {
+        // 두 언어판의 소제목 앵커는 서로 달라 #앵커는 넘기지 않는다
+        location.replace(alternate.href + location.search);
+      }
+    })();
+  </script>
+  {%- endif %}
+{% endblock %}
+
 {% block extrahead %}
+  {%- set locale = page_locale() -%}
+  {%- set is_en = locale == "en" -%}
+  {%- set lang_root = config.site_url ~ ("en/" if is_en else "") -%}
   {%- set page_title = config.site_name if page.is_homepage else page.title ~ " - " ~ config.site_name -%}
   {%- set description = page.meta.description if page.meta and page.meta.description else config.site_description -%}
-  {%- set og_image = config.site_url ~ "assets/img/og-image.jpg" -%}
-  {%- set author = {"@type": "Person", "name": "허제민", "alternateName": "Jemin Huh", "url": config.site_url ~ "about/",
-                    "sameAs": ["https://github.com/JM-Lab", "https://www.linkedin.com/in/jmlab"]} -%}
-  {%- set book = {"@type": "Book", "name": "스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드", "author": author,
-                  "publisher": {"@type": "Organization", "name": "위키북스"}, "isbn": "9791158396961", "datePublished": "2026-09-17",
-                  "inLanguage": "ko", "numberOfPages": 692, "url": "https://wikibook.co.kr/springai-agents/",
+  {%- set og_image = config.site_url ~ ("assets/img/og-image-en.jpg" if is_en else "assets/img/og-image.jpg") -%}
+  {%- set author = {"@type": "Person", "name": "Jemin Huh" if is_en else "허제민", "alternateName": "허제민" if is_en else "Jemin Huh",
+                    "url": lang_root ~ "about/", "sameAs": ["https://github.com/JM-Lab", "https://www.linkedin.com/in/jmlab"]} -%}
+  {%- set book = {"@type": "Book", "name": "스프링 AI 2.0으로 배우는 AI 에이전트 개발 완벽 가이드",
+                  "alternateName": "The Complete Guide to AI Agent Development with Spring AI 2.0", "author": author,
+                  "publisher": {"@type": "Organization", "name": "Wikibooks" if is_en else "위키북스"}, "isbn": "9791158396961",
+                  "datePublished": "2026-09-17", "inLanguage": "ko", "numberOfPages": 692, "url": "https://wikibook.co.kr/springai-agents/",
                   "image": config.site_url ~ "assets/img/cover.jpg"} -%}
   <meta property="og:type" content="{{ 'website' if page.is_homepage else 'article' }}">
   <meta property="og:site_name" content="{{ config.site_name | e }}">
-  <meta property="og:locale" content="ko_KR">
+  <meta property="og:locale" content="{{ 'en_US' if is_en else 'ko_KR' }}">
+  <meta property="og:locale:alternate" content="{{ 'ko_KR' if is_en else 'en_US' }}">
   <meta property="og:title" content="{{ page_title | e }}">
   <meta property="og:description" content="{{ description | e }}">
   {%- if page.canonical_url %}
@@ -31,12 +86,27 @@
   <meta name="google-site-verification" content="{{ config.extra.google_site_verification | e }}">
   {%- endif %}
   {%- if page.is_homepage %}
-  <script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "WebSite", "name": config.site_name, "url": config.site_url,
-      "description": config.site_description, "inLanguage": "ko", "author": author, "about": book} | tojson }}</script>
+  <script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "WebSite", "name": config.site_name, "url": lang_root,
+      "description": config.site_description, "inLanguage": locale, "author": author, "about": book} | tojson }}</script>
   {%- elif page.canonical_url %}
   {%- set page_type = "TechArticle" if page.meta and page.meta.tags else "WebPage" %}
   <script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": page_type, "headline": page.title, "description": description,
-      "inLanguage": "ko", "url": page.canonical_url, "mainEntityOfPage": page.canonical_url, "image": og_image, "author": author,
-      "isPartOf": {"@type": "WebSite", "name": config.site_name, "url": config.site_url}, "about": book} | tojson }}</script>
+      "inLanguage": locale, "url": page.canonical_url, "mainEntityOfPage": page.canonical_url, "image": og_image, "author": author,
+      "isPartOf": {"@type": "WebSite", "name": config.site_name, "url": lang_root}, "about": book} | tojson }}</script>
+  {%- endif %}
+{% endblock %}
+
+{#- 검색 색인은 hooks/i18n_search.py가 언어별로 나눠 둔다. 영어판 페이지는 테마 설정의 base를 /en/으로 옮겨 자기 언어 색인만 읽게 한다. -#}
+{% block config %}
+  {{ super() }}
+  {%- if page_locale() == "en" %}
+  <script>
+    (function () {
+      var element = document.getElementById("__config");
+      var appConfig = JSON.parse(element.textContent);
+      appConfig.base = appConfig.base.replace(/\/?$/, "/") + "en/";
+      element.textContent = JSON.stringify(appConfig);
+    })();
+  </script>
   {%- endif %}
 {% endblock %}

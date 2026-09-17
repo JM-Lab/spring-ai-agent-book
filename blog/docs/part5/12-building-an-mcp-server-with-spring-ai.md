@@ -59,7 +59,7 @@ MCP 자바 SDK만 써도 서버는 만들 수 있습니다. 다만 전송 계층
 전송 방식별 핵심 설정은 다음과 같습니다.
 
 - **STDIO**: `spring.ai.mcp.server.stdio=true`로 켭니다. 웹 스타터에서 켜면 웹 전송 자동 구성이 꺼져 STDIO 전용이 됩니다. 한 프로세스가 HTTP와 STDIO를 동시에 열지는 못합니다.
-- **Streamable HTTP**: `spring.ai.mcp.server.protocol`의 기본값이 `STREAMABLE`이라 생략할 수 있지만 적어 두는 편이 분명합니다. 엔드포인트는 `streamable-http.mcp-endpoint`(기본 `/mcp`)로 정하고, `streamable-http.keep-alive-interval`을 지정하면 주기적으로 핑을 보내 끊긴 세션을 정리합니다.
+- **Streamable HTTP**: `spring.ai.mcp.server.protocol`의 기본값이 `STREAMABLE`이라 생략할 수 있지만 적어 두는 편이 분명합니다. 엔드포인트는 `streamable-http.mcp-endpoint`(기본 `/mcp`)로 정하고, `streamable-http.keep-alive-interval`을 지정하면 주기적으로 모든 세션에 핑을 보냅니다.
 - **Stateless**: `spring.ai.mcp.server.protocol`만 `STATELESS`로 바꾸고 나머지는 Streamable HTTP 설정을 씁니다. 세션이 없어 수평 확장이 쉬운 대신 진행 알림, 로그, 핑, 샘플링, 추가 정보 요청처럼 서버가 클라이언트로 보내는 메시지는 쓸 수 없습니다.
 - **SSE**: 구형 클라이언트 호환용입니다. 새 프로젝트에서 고를 이유는 없습니다.
 
@@ -114,7 +114,7 @@ MCP 서버는 요청에 답하기만 하지 않습니다. 클라이언트에 먼
 ```
 <span class="code-link">[전체 코드 보기](https://github.com/JM-Lab/spring-ai-agent-book/blob/main/chapter5/src/main/java/kr/jmlab/spring/ai/agent/book/chapter5/server/Chapter5RagMcpAnswerTools.java)</span>
 
-이 툴은 서버 안에서 검색과 답변 생성까지 끝내고 결과를 돌려줍니다. 클라이언트가 보는 입력 스키마에는 `question`, `topK`, `category`만 있고 `McpMeta`는 빠집니다. 서버는 클라이언트가 요청에 실어 보낸 사용자나 대화 식별자 같은 메타데이터를 받아 답변 서비스에 넘깁니다. `idempotentHint`는 `false`입니다. 이 힌트는 답이 매번 같은지가 아니라 같은 인자로 반복 호출해도 환경에 추가 효과가 없는지를 나타내며, 읽기 전용 툴에서는 참고 정보에 가깝습니다. 두 클래스 모두 MCP 관련 코드는 얇게 두고 실제 처리는 서비스 계층에 맡깁니다.
+이 툴은 서버 안에서 검색과 답변 생성까지 끝내고 결과를 돌려줍니다. 클라이언트가 보는 입력 스키마에는 `question`, `topK`, `category`만 있고 `McpMeta`는 빠집니다. 서버는 클라이언트가 요청에 실어 보낸 사용자나 대화 식별자 같은 메타데이터를 받아 답변 서비스에 넘깁니다. `idempotentHint`는 `false`입니다. 이 힌트는 답이 매번 같은지가 아니라 같은 인자로 반복 호출해도 환경에 추가 효과가 없는지를 나타냅니다. MCP 명세는 이 힌트가 `readOnlyHint`가 false일 때만 의미가 있다고 적으므로, 읽기 전용 툴에서는 참고 정보에 가깝습니다. 두 클래스 모두 MCP 관련 코드는 얇게 두고 실제 처리는 서비스 계층에 맡깁니다.
 
 ## 서버 유형별 구현 기준
 
@@ -140,4 +140,5 @@ MCP 서버는 4-티어 아키텍처의 T3 능력 티어에 속합니다. 오케�
 
 ## 참고 자료
 
+- [MCP ToolAnnotations](https://modelcontextprotocol.io/specification/2025-11-25/schema#toolannotations): 툴 성격 힌트의 정의와 각 힌트가 의미를 갖는 조건
 - [MCP Java SDK Overview](https://java.sdk.modelcontextprotocol.io/latest/overview/): 책에 실린 자바 MCP 클라이언트와 서버 아키텍처 그림의 출처

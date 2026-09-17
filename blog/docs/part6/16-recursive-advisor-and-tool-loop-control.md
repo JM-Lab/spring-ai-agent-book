@@ -114,7 +114,7 @@ tags:
 | `doGetNextInstructionsForToolCall` | 툴 실행 후 다음 입력을 만들 때 | 방대한 툴 결과를 요약하거나 걸러 컨텍스트 절약 |
 | `doFinalizeLoop` | 루프 종료 직후(1회) | 전체 수행 시간과 총비용 기록 |
 
-예제 저장소는 반복 상한을 훅 대신 앞에서 본 체커로 구현했고, 훅은 강화 에이전트의 `OrchestrationToolCallingAdvisor`가 씁니다. 이 어드바이저는 `doBeforeCall`을 재정의해 매 라운드 메타 툴을 툴 목록에 더하며, 자세한 내용은 [엔터프라이즈 스프링 AI 에이전트 CLI](../part6/20-enterprise-spring-ai-agent-cli-multi-agent-and-meta-tools.md)에서 다룹니다.
+예제 저장소는 반복 상한을 훅 대신 앞에서 본 체커로 구현했고, 훅은 강화 에이전트의 `OrchestrationToolCallingAdvisor`가 씁니다. 이 어드바이저는 `doBeforeCall`과 `doBeforeStream`을 재정의해 매 라운드 메타 툴을 툴 목록에 더하며, 자세한 내용은 [엔터프라이즈 스프링 AI 에이전트 CLI](../part6/20-enterprise-spring-ai-agent-cli-multi-agent-and-meta-tools.md)에서 다룹니다.
 
 훅이 실행 흐름을 다룬다면 파라미터 증강은 모델의 생각을 꺼냅니다. 모델이 왜 이 툴을 골랐는지 남기고 싶을 때, 비즈니스 코드를 고치지 않고 `AugmentedToolCallbackProvider`로 기존 툴을 감쌉니다. 추론 과정(`innerThought`)이나 신뢰도(`confidence`) 같은 추가 파라미터를 레코드로 정의하면, 모델은 원래 파라미터에 이 필드가 더해진 스키마를 보고 값을 함께 보냅니다. `argumentConsumer`가 그 값을 받아 로그에 남기고, `removeExtraArgumentsAfterProcessing(true)`로 처리가 끝난 추가 인자를 지우면 원래 툴 메서드에는 처음 설계한 파라미터만 전달됩니다.
 
@@ -127,7 +127,7 @@ tags:
 <figcaption>StructuredOutputValidationAdvisor의 구조화한 출력 교정 루프 (출처: <a href="https://spring.io/blog/2026/06/23/spring-ai-self-correcting-structured-output">Self-Correcting Structured Output in Spring AI 2.0</a>)</figcaption>
 </figure>
 
-대상 타입에서 만든 JSON 스키마를 프롬프트에 넣고, 응답을 그 스키마로 검증합니다. 통과하면 타입 컨버터가 객체로 바꾸고, 실패하면 검증 오류 메시지를 프롬프트에 덧붙여 하위 체인을 다시 호출합니다. 모델이 무엇을 틀렸는지 보고 고치므로 같은 요청을 되풀이하는 재시도와 다릅니다. 기본 재시도 횟수는 3회이고, 바꾸려면 `StructuredOutputValidationAdvisor.builder()`에 `maxRepeatAttempts`를 지정해 직접 등록합니다. 예제 저장소에서는 [토큰과 구조화한 출력](../part2/04-tokens-and-structured-output.md)에서 다룬 2장 예제가 네이티브 구조화한 출력과 함께 이 방식을 씁니다.
+대상 타입에서 만든 JSON 스키마가 프롬프트에 들어가고, 어드바이저는 응답을 그 스키마로 검증합니다. 통과하면 타입 컨버터가 객체로 바꾸고, 실패하면 검증 오류 메시지를 프롬프트에 덧붙여 하위 체인을 다시 호출합니다. 모델이 무엇을 틀렸는지 보고 고치므로 같은 요청을 되풀이하는 재시도와 다릅니다. 기본 재시도 횟수는 3회이고, 바꾸려면 `StructuredOutputValidationAdvisor.builder()`에 `maxRepeatAttempts`를 지정해 직접 등록합니다. 예제 저장소에서는 [토큰과 구조화한 출력](../part2/04-tokens-and-structured-output.md)에서 다룬 2장 예제가 네이티브 구조화한 출력과 함께 이 방식을 씁니다.
 
 ```java title="Ch2Step3_StructuredOutput.java"
 --8<-- "chapter2/src/main/java/kr/jmlab/spring/ai/agent/book/chapter2/Ch2Step3_StructuredOutput.java:50:54"

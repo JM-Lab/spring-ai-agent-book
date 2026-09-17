@@ -43,7 +43,7 @@ hide:
 
     메인 에이전트입니다. 추론하고 계획하고 툴을 고르고 루프를 제어합니다. 경쟁력은 모델이 아니라 여기, 계획과 제어와 상태 관리에 있습니다.
 
-    스프링 AI: `ChatClient`, 어드바이저 체인, `ToolCallingAdvisor`, `MessageChatMemoryAdvisor`, `ToolSearch`
+    스프링 AI: `ChatClient`, 어드바이저 체인, `ToolCallingAdvisor`, `MessageChatMemoryAdvisor`, `ToolSearchToolCallingAdvisor`
 
     [:octicons-arrow-right-24: 재귀적 어드바이저와 툴 루프 제어](part6/16-recursive-advisor-and-tool-loop-control.md)
 

@@ -13,7 +13,7 @@ tags:
 
 앞선 글들에서는 에이전트가 실행 루프로 움직인다는 것, 루프마다 모델에 넘길 컨텍스트를 설계하는 컨텍스트 엔지니어링, 그리고 [재귀적 어드바이저로 툴 루프를 제어하는 방법](../part6/16-recursive-advisor-and-tool-loop-control.md)을 살펴봤습니다. 이번 글에서는 이 부품들을 조합해 실제로 동작하는 에이전트를 만듭니다.
 
-설계를 처음부터 새로 할 필요는 없습니다. 클로드 코드처럼 널리 쓰이는 에이전트 제품은 내부 구조를 문서와 오픈소스로 공개하고 있습니다. 책은 이런 제품들의 공통 구조를 스프링 AI 모듈에 대응시킨 '스프링 AI 에이전트 아키텍처'를 제시하고, 예제 저장소는 이를 `SpringAIAgent` 클래스로 구현합니다.
+설계를 처음부터 새로 할 필요는 없습니다. 클로드 코드처럼 널리 쓰이는 에이전트 제품은 내부 구조를 문서로 공개하고, 코드까지 오픈소스로 공개한 에이전트도 여럿입니다. 책은 이런 제품들의 공통 구조를 스프링 AI 모듈에 대응시킨 '스프링 AI 에이전트 아키텍처'를 제시하고, 예제 저장소는 이를 `SpringAIAgent` 클래스로 구현합니다.
 
 글의 뒷부분은 툴이 많아졌을 때 생기는 문제를 다룹니다. 등록한 툴 정의를 매번 전부 모델에 보내는 대신, 필요한 툴만 검색해 넘기는 동적 툴 탐색입니다.
 
@@ -86,7 +86,7 @@ Step 1 러너는 `coreAgent` 빈을 주입받아 같은 대화 ID로 두 번 묻
 
 그림의 번호를 따라가면 흐름은 일곱 단계입니다.
 
-1. 애플리케이션이 시작할 때 등록된 툴을 모두 `ToolIndex`에 색인합니다.
+1. 등록된 툴을 모두 `ToolIndex`에 색인합니다.
 2. 첫 요청에는 전체 툴 대신 검색 툴 정의만 담아 보냅니다.
 3. 능력이 필요하다고 판단한 모델이 검색어를 넣어 검색 툴을 호출합니다.
 4. `ToolIndex`가 검색어에 맞는 툴을 찾고, 그 정의를 다음 요청의 컨텍스트에 더합니다.
@@ -103,7 +103,7 @@ Step 1 러너는 `coreAgent` 빈을 주입받아 같은 대화 ID로 두 번 묻
 ```
 <span class="code-link">[전체 코드 보기](https://github.com/JM-Lab/spring-ai-agent-book/blob/main/chapter6/src/main/java/kr/jmlab/spring/ai/agent/book/chapter6/orchestration/AgentConfig.java)</span>
 
-동적 툴 탐색을 켜면 `VectorToolIndex`는 한 번만 만들고, 요청마다 새로 만드는 `ToolSearchToolCallingAdvisor`가 그 색인을 같이 씁니다. 색인은 세션별 임베딩을 추적해 정리하는데, 요청마다 새로 만들면 벡터 스토어에 중복이 쌓입니다. `maxResults`에는 한 번의 검색으로 활성화할 툴 수의 상한인 5를 줍니다. 색인이 쓰는 저장소는 `toolVectorStore` 빈의 `SimpleVectorStore`이고, 임베딩 모델은 `application.yml`의 `spring.ai.ollama.embedding.model`에 지정한 `bge-m3`입니다.
+동적 툴 탐색을 켜면 `VectorToolIndex`는 한 번만 만들고, 요청마다 새로 만드는 `ToolSearchToolCallingAdvisor`가 그 색인을 같이 씁니다. 색인은 세션별 임베딩을 추적해 정리하는데, 요청마다 새로 만들면 벡터 스토어에 중복이 쌓입니다. `maxResults`에는 5를 줍니다. 색인이 쓰는 저장소는 `toolVectorStore` 빈의 `SimpleVectorStore`이고, 임베딩 모델은 `application.yml`의 `spring.ai.ollama.embedding.model`에 지정한 `bge-m3`입니다.
 
 툴 수를 세어 보면 언제 전환되는지 알 수 있습니다. 로컬 툴은 날짜 2개, 계산 2개, 재고 3개로 모두 7개입니다. 운영 MCP 서버의 툴 2개를 더해도 9개라 전체 툴을 그대로 싣고, 툴이 10개 이상이 되어야 검색으로 넘어갑니다. Step 4부터 쓰는 강화 에이전트는 이 규칙 대신, 메타 툴은 항상 보여 주고 도메인 툴만 검색하는 `OrchestrationToolCallingAdvisor`를 씁니다. 이 구성은 [엔터프라이즈 에이전트 CLI 글](../part6/20-enterprise-spring-ai-agent-cli-multi-agent-and-meta-tools.md)에서 다룹니다.
 
